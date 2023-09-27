@@ -2,6 +2,7 @@ package Service;
 
 import java.util.List;
 
+import DAO.AccountDAO;
 import DAO.MessageDAO;
 import Model.Message;
 
@@ -24,8 +25,7 @@ public class MessageService {
         this.messageDAO = messageDAO;
     }
     public Message addMessage(Message message){
-        String text = message.getMessage_text();
-        if (text.length() <1 || text.length() >255){
+        if (message.getMessage_text().length() <1 || message.getMessage_text().length() >254|| AccountDAO.geAccountByAccountId(message.getPosted_by()) ==  null){
             return null;
         }
         return messageDAO.addMessage(message);

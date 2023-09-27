@@ -74,6 +74,12 @@ public class MessageDAO {
             ps.setString(2,message.getMessage_text());
             ps.setLong(3,message.getTime_posted_epoch());
             ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs.next()){
+                int message_id = rs.getInt("message_id");
+                message.setMessage_id(message_id);
+
+            }
             return message;
         }
         catch (SQLException e){

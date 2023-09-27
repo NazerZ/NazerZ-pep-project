@@ -68,11 +68,11 @@ public class AccountDAO {
     public Account addUser(Account account){
         Connection connection = ConnectionUtil.getConnection();
         try{
-            String sql = "insert into account (account_id,username,password) values(?,?,?)";
+            String sql = "insert into account (username,password) values(?,?)";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1,account.getAccount_id());
-            ps.setString(2,account.getUsername());
-            ps.setString(3,account.getPassword());
+            //ps.setInt(1,account.getAccount_id());
+            ps.setString(1,account.getUsername());
+            ps.setString(2,account.getPassword());
             ps.executeUpdate();
             return account;
         }
@@ -81,7 +81,7 @@ public class AccountDAO {
         }
         return null;
     }
-    public boolean isUsernameAvailable(Account account){
+    public Account isUsernameAvailable(Account account){
         Connection connection = ConnectionUtil.getConnection();
         try{
             String sql = "select * from account where username = ?";
@@ -90,15 +90,39 @@ public class AccountDAO {
             ResultSet rs = ps.executeQuery();
 
             while(rs.next()){
-                return false;
+                Account temp = new Account(rs.getInt("account_id"),rs.getString("username"),"");
+                return temp;
             }
 
         }
         catch (SQLException e){
             System.out.println(e.getMessage());
         }
-        return true;
+        return null;
     
     }
+    public static Account geAccountByAccountId(int id){    
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "select * from account where account_id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1,id);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Account temp = new Account(rs.getInt("account_id"),
+                rs.getString("username"),
+                "");
+                return temp;
+            }
+
+        }
+        catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        
+        return null;
+    }
+
+
 }
 

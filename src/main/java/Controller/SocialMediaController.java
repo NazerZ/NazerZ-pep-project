@@ -1,9 +1,11 @@
 package Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
+import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 import io.javalin.Javalin;
@@ -29,7 +31,9 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.get("example-endpoint", this::exampleHandler);
-        app.post("register",this::postAccountHandler);
+        app.post("register",this::postAccountRegisterHandler);
+        app.post("login",this::postAccountLoginHandler);
+        app.post("messages",this::postMessageHandler);
         return app;
     }
 
@@ -40,12 +44,34 @@ public class SocialMediaController {
     private void exampleHandler(Context context) {
         context.json("sample text");
     }
-    private void postAccountHandler(Context ctx) throws JsonProcessingException{
+    private void postAccountRegisterHandler(Context ctx) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(),Account.class);
         Account addedAccount = accountService.addAccount(account);
         if(addedAccount != null){
             ctx.json(mapper.writeValueAsString(addedAccount));
+            ctx.status(200);
+        }else{
+            ctx.status(400);
+        }
+    }
+    private void postAccountLoginHandler(Context ctx) throws JsonMappingException, JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(),Account.class);
+        Account accountLoggedIn = accountService.getAccount(account);
+        if(accountLoggedIn != null){
+            ctx.json(mapper.writeValueAsString(accountLoggedIn));
+            ctx.status(200);
+        }else{
+            ctx.status(401);
+        }
+    }
+    private void postMessageHandler(Context ctx) throws JsonMappingException, JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(),Message.class);
+        Message postedMessage = messageService.addMessage(message);
+        if(postedMessage != null){
+            ctx.json(mapper.writeValueAsString(postedMessage));
             ctx.status(200);
         }else{
             ctx.status(400);

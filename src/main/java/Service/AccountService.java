@@ -19,11 +19,12 @@ public class AccountService {
         return accountDAO.getLogin(account);
     }
     public Account addAccount(Account account){
-        if(accountDAO.isUsernameAvailable(account) == false || account.getPassword().length() < 4 || account.getUsername().length() <1){
+        if(accountDAO.isUsernameAvailable(account) != null || account.getPassword().length() < 4 || account.getUsername().length() <1){
             return null;
         }
         accountDAO.addUser(account);
-        return accountDAO.getLogin(account);
+        account.setAccount_id(accountDAO.getLogin(account).getAccount_id());
+        return account;
     }
 
 }
