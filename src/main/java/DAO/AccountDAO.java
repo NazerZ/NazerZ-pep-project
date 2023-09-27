@@ -81,5 +81,24 @@ public class AccountDAO {
         }
         return null;
     }
+    public boolean isUsernameAvailable(Account account){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "select * from account where username = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1,account.getUsername());
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                return false;
+            }
+
+        }
+        catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return true;
+    
+    }
 }
 

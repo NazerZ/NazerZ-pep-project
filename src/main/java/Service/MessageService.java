@@ -24,6 +24,10 @@ public class MessageService {
         this.messageDAO = messageDAO;
     }
     public Message addMessage(Message message){
+        String text = message.getMessage_text();
+        if (text.length() <1 || text.length() >255){
+            return null;
+        }
         return messageDAO.addMessage(message);
     }
     public List<Message> getAllMessages(){
@@ -45,5 +49,17 @@ public class MessageService {
         return oldMessage;
     }
     return null;
+    }
+    public boolean isMessageValid(String message){
+        if(message.length() < 1 || message.length() > 255){
+            return false;
+        }
+        return true;
+    }    
+    public boolean IsMessageValid(Message message){
+        if(message.getMessage_text().length() < 1 || message.getMessage_text().length() > 255){
+            return false;
+        }
+        return true;
     }
 }
