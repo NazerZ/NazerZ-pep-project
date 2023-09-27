@@ -43,12 +43,18 @@ public class MessageService {
         return null;
     }
     public Message updateMessage(Message oldMessage, String newMessage){
-    if (messageDAO.getMessageByMessageId(oldMessage) != null){
-        messageDAO.updateMessage(oldMessage, newMessage);
-        oldMessage.setMessage_text(newMessage);
-        return oldMessage;
+        if (messageDAO.getMessageByMessageId(oldMessage) != null){
+            messageDAO.updateMessage(oldMessage, newMessage);
+            oldMessage.setMessage_text(newMessage);
+            return oldMessage;
+        }
+        return null;
     }
-    return null;
+    public Message getMessageByMessageId(int id){
+        if(messageDAO.getMessageByMessageId(id) == null){
+            return null;
+        }
+        return messageDAO.getMessageByMessageId(id);
     }
     public boolean isMessageValid(String message){
         if(message.length() < 1 || message.length() > 255){
