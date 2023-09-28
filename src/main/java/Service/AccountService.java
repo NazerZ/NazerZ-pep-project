@@ -22,9 +22,7 @@ public class AccountService {
         if(accountDAO.isUsernameAvailable(account) != null || account.getPassword().length() < 4 || account.getUsername().length() <1){
             return null;
         }
-        accountDAO.addUser(account);
-        account.setAccount_id(accountDAO.getLogin(account).getAccount_id());
-        return account;
+        return accountDAO.addUser(account);
     }
 
 }

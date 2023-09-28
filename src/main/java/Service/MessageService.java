@@ -1,5 +1,6 @@
 package Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.AccountDAO;
@@ -25,7 +26,7 @@ public class MessageService {
         this.messageDAO = messageDAO;
     }
     public Message addMessage(Message message){
-        if (message.getMessage_text().length() <1 || message.getMessage_text().length() >254|| AccountDAO.geAccountByAccountId(message.getPosted_by()) ==  null){
+        if (!isMessageValid(message.getMessage_text())|| AccountDAO.isAccountIdValid(message.getPosted_by())==  false){
             return null;
         }
         return messageDAO.addMessage(message);
@@ -33,39 +34,38 @@ public class MessageService {
     public List<Message> getAllMessages(){
         return messageDAO.getAllMessages();
     }
-    public List<Message> getAllMessageByUserID(Message message){
-        return messageDAO.getAllMessagesByUser(message);
+    public List<Message> getAllMessageByUserID(int id){
+        List<Message> messages = messageDAO.getAllMessagesByUser(id);
+        return messages;
     }
-    public Message deleteMessageByMessageID(Message message){
-        if(messageDAO.getMessageByMessageId(message) !=null){
-            return messageDAO.deleteMessage(message);
+    public Message deleteMessageByMessageID(int message_id){
+        if(messageDAO.getMessageByMessageId(message_id) !=null){
+            Message message = messageDAO.getMessageByMessageId(message_id);
+            messageDAO.deleteMessage(message_id);
+            return message;
         }
         return null;
     }
-    public Message updateMessage(Message oldMessage, String newMessage){
-        if (messageDAO.getMessageByMessageId(oldMessage) != null){
-            messageDAO.updateMessage(oldMessage, newMessage);
-            oldMessage.setMessage_text(newMessage);
-            return oldMessage;
-        }
-        return null;
-    }
-    public Message getMessageByMessageId(int id){
-        if(messageDAO.getMessageByMessageId(id) == null){
+
+    public Message updateMessage(Message message,int message_id){
+        String text = message.getMessage_text();
+        if (messageDAO.getMessageByMessageId(message_id) == null || !isMessageValid(text)){
             return null;
         }
-        return messageDAO.getMessageByMessageId(id);
+        messageDAO.updateMessage(message, message_id);
+        return messageDAO.getMessageByMessageId(message_id);
+    }
+    public Message getMessageByMessageID(int message_id){
+        Message m = messageDAO.getMessageByMessageId(message_id);
+        if (m==null){
+            return null;
+        }
+        return messageDAO.getMessageByMessageId(message_id);
     }
     public boolean isMessageValid(String message){
-        if(message.length() < 1 || message.length() > 255){
+        if(message.length() < 1 || message.length() >= 255){
             return false;
         }
         return true;
     }    
-    public boolean IsMessageValid(Message message){
-        if(message.getMessage_text().length() < 1 || message.getMessage_text().length() > 255){
-            return false;
-        }
-        return true;
-    }
 }
